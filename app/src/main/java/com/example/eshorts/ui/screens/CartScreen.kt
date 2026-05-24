@@ -40,14 +40,14 @@ fun CartScreen(
 
             else -> {
                 val products = state.data ?: emptyList()
-                val total = products.sumOf { it.price }
+                // общая стоимость: сумма price * quantity
+                val total = products.sumOf { it.price * it.quantity }
 
                 Column(
                     modifier = Modifier
                         .padding(padding)
                         .padding(16.dp)
                 ) {
-                    // Список товаров в корзине
                     LazyColumn(
                         modifier = Modifier
                             .weight(1f)
@@ -67,12 +67,26 @@ fun CartScreen(
                                         modifier = Modifier.weight(1f)
                                     ) {
                                         Text(product.name)
-                                        // Цена в рублях
-                                        Text(formatRubles(product.price))
+
+                                        // цена за штуку
+                                        Text("Цена: ${formatRubles(product.price)}")
+
+                                        // количество
+                                        Text("Кол-во: ${product.quantity}")
+
+                                        // сумма по позиции
+                                        val lineTotal = product.price * product.quantity
+                                        Text("Итого: ${formatRubles(lineTotal)}")
                                     }
 
-                                    Button(onClick = { viewModel.removeFromCart(product) }) {
-                                        Text("Убрать")
+                                    Column {
+                                        Button(onClick = { viewModel.addToCart(product) }) {
+                                            Text("+")
+                                        }
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Button(onClick = { viewModel.removeFromCart(product) }) {
+                                            Text("-")
+                                        }
                                     }
                                 }
                             }
@@ -81,9 +95,8 @@ fun CartScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Итоговая сумма
                     Text(
-                        text = "Итого: ${formatRubles(total)}",
+                        text = "Общая сумма: ${formatRubles(total)}",
                         style = MaterialTheme.typography.titleMedium
                     )
                 }

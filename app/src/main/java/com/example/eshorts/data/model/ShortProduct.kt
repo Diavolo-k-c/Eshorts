@@ -7,5 +7,6 @@ data class ShortProduct(
     val description: String,
     val imageUrl: String = "",
     val inCart: Boolean = false,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val quantity: Int = 0
 )

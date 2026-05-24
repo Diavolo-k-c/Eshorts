@@ -52,7 +52,8 @@ class ShopViewModel(
     fun addToCart(product: ShortProduct) {
         viewModelScope.launch {
             try {
-                repository.updateProduct(product.copy(inCart = true))
+                val newQuantity = product.quantity + 1
+                repository.updateProduct(product.copy(inCart = true, quantity = newQuantity))
                 loadProducts()
                 loadCart()
             } catch (e: Exception) {
@@ -75,7 +76,9 @@ class ShopViewModel(
     fun removeFromCart(product: ShortProduct) {
         viewModelScope.launch {
             try {
-                repository.updateProduct(product.copy(inCart = false))
+                val newQuantity = (product.quantity - 1).coerceAtLeast(0)
+                val inCart = newQuantity > 0
+                repository.updateProduct(product.copy(inCart = inCart, quantity = newQuantity))
                 loadProducts()
                 loadCart()
             } catch (e: Exception) {

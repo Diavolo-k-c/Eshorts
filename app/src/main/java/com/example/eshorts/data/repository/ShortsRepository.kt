@@ -79,6 +79,7 @@ class ShortsRepository(context: Context) {
             put(ShortsDbHelper.COL_IMAGE_URL, product.imageUrl)
             put(ShortsDbHelper.COL_IN_CART, if (product.inCart) 1 else 0)
             put(ShortsDbHelper.COL_IS_FAVORITE, if (product.isFavorite) 1 else 0)
+            put(ShortsDbHelper.COL_QUANTITY, product.quantity)
         }
 
         db.update(
@@ -97,7 +98,8 @@ class ShortsRepository(context: Context) {
             description = cursor.getString(cursor.getColumnIndexOrThrow(ShortsDbHelper.COL_DESCRIPTION)),
             imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(ShortsDbHelper.COL_IMAGE_URL)) ?: "",
             inCart = cursor.getInt(cursor.getColumnIndexOrThrow(ShortsDbHelper.COL_IN_CART)) == 1,
-            isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(ShortsDbHelper.COL_IS_FAVORITE)) == 1
+            isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(ShortsDbHelper.COL_IS_FAVORITE)) == 1,
+            quantity = cursor.getInt(cursor.getColumnIndexOrThrow(ShortsDbHelper.COL_QUANTITY))
         )
     }
 }
