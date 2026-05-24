@@ -35,16 +35,15 @@ class ShortsDbHelper(context: Context) :
         """.trimIndent()
 
         db.execSQL(sql)
+        db.execSQL("""
+    INSERT INTO $TABLE_PRODUCTS ($COL_NAME, $COL_PRICE, $COL_DESCRIPTION, $COL_IMAGE_URL, $COL_IN_CART, $COL_IS_FAVORITE)
+    VALUES ('Шорты Basic', 1999.0, 'Базовые шорты на каждый день', 'https://example.com/basic_shorts.png', 0, 0)
+""".trimIndent())
 
         db.execSQL("""
-            INSERT INTO $TABLE_PRODUCTS ($COL_NAME, $COL_PRICE, $COL_DESCRIPTION, $COL_IMAGE_URL, $COL_IN_CART, $COL_IS_FAVORITE)
-            VALUES ('Шорты Basic', 29.99, 'Базовые шорты на каждый день', '', 0, 0)
-        """.trimIndent())
-
-        db.execSQL("""
-            INSERT INTO $TABLE_PRODUCTS ($COL_NAME, $COL_PRICE, $COL_DESCRIPTION, $COL_IMAGE_URL, $COL_IN_CART, $COL_IS_FAVORITE)
-            VALUES ('Шорты Sport', 39.99, 'Спортивные шорты для активности', '', 0, 0)
-        """.trimIndent())
+    INSERT INTO $TABLE_PRODUCTS ($COL_NAME, $COL_PRICE, $COL_DESCRIPTION, $COL_IMAGE_URL, $COL_IN_CART, $COL_IS_FAVORITE)
+    VALUES ('Шорты Sport', 2499.0, 'Спортивные шорты для активности', 'https://example.com/sport_shorts.png', 0, 0)
+""".trimIndent())
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
