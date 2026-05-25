@@ -8,7 +8,7 @@ class ShortsDbHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
-        const val DATABASE_NAME = "eshortyshop.db"
+        const val DATABASE_NAME = "eshorts.db"
         const val DATABASE_VERSION = 3
 
         const val TABLE_PRODUCTS = "short_products"
