@@ -5,39 +5,36 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.eshorts.viewmodel.ShopViewModel
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import com.example.eshorts.ui.formatRubles
-import kotlinx.coroutines.launch
+import com.example.eshorts.viewmodel.ShopViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: ShopViewModel,
     onOpenDetail: (Int) -> Unit,
-    onOpenCart: () -> Unit
+    onOpenCart: () -> Unit,
+    onOpenAccount: () -> Unit,
+    onShowAddedToCart: () -> Unit   // новый параметр
 ) {
     val state = viewModel.productsState.collectAsStateWithLifecycle().value
-
-    // 1) состояние для Snackbar
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Ешорты") },
-                actions = { TextButton(onClick = onOpenCart) { Text("Корзина") } }
+                actions = {
+                    TextButton(onClick = onOpenAccount) {
+                        Text("Аккаунт")
+                    }
+                }
             )
-        },
-        // 2) хост для Snackbar
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
         }
     ) { padding ->
         when {
@@ -52,29 +49,21 @@ fun HomeScreen(
                             .clickable { onOpenDetail(product.id) }
                     ) {
                         Row(modifier = Modifier.padding(16.dp)) {
-
                             AsyncImage(
-                                model = product.imageUrls,
+                                model = product.imageUrls.firstOrNull().orEmpty(),
                                 contentDescription = product.name,
                                 modifier = Modifier.size(80.dp),
                                 contentScale = ContentScale.Crop
                             )
-
                             Spacer(modifier = Modifier.width(16.dp))
-
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(product.name)
                                 Text(formatRubles(product.price))
-
                                 Row {
                                     Button(
                                         onClick = {
                                             viewModel.addToCart(product)
-                                            scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    message = "Товар добавлен в корзину"
-                                                )
-                                            }
+                                            onShowAddedToCart()   // ← сказать наверх показать снекбар
                                         }
                                     ) {
                                         Text("В корзину")

@@ -13,11 +13,13 @@ import com.example.eshorts.ui.screens.HomeScreen
 import com.example.eshorts.ui.screens.FavoritesScreen
 import com.example.eshorts.viewmodel.ShopViewModel
 
+
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
     viewModel: ShopViewModel,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    onShowAddedToCart: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -32,23 +34,34 @@ fun AppNavGraph(
                 },
                 onOpenCart = {
                     navController.navigate(Routes.CART)
-                }
+                },
+                onOpenAccount = {
+                    // TODO: экран аккаунта
+                },
+                onShowAddedToCart = onShowAddedToCart
             )
         }
+
         composable("${Routes.DETAIL}/{productId}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("productId")?.toIntOrNull() ?: 0
+            val id = backStackEntry.arguments
+                ?.getString("productId")
+                ?.toIntOrNull() ?: 0
+
             DetailScreen(
                 productId = id,
                 viewModel = viewModel,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onShowAddedToCart = onShowAddedToCart
             )
         }
+
         composable(Routes.CART) {
             CartScreen(
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() }
             )
         }
+
         composable(Routes.FAVORITES) {
             FavoritesScreen(
                 viewModel = viewModel,

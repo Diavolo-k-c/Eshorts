@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingCart
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +29,9 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = backStackEntry?.destination?.route
+
+                val snackbarHostState = remember { SnackbarHostState() }
+                val scope = rememberCoroutineScope()
 
                 Scaffold(
                     bottomBar = {
@@ -49,7 +53,8 @@ class MainActivity : ComponentActivity() {
                                 label = { Text("Избранное") }
                             )
                             NavigationBarItem(
-                                selected = currentRoute == Routes.HOME || currentRoute?.startsWith(Routes.DETAIL) == true,
+                                selected = currentRoute == Routes.HOME ||
+                                        currentRoute?.startsWith(Routes.DETAIL) == true,
                                 onClick = {
                                     navController.navigate(Routes.HOME) {
                                         popUpTo(Routes.HOME) { inclusive = true }
@@ -81,12 +86,18 @@ class MainActivity : ComponentActivity() {
                                 label = { Text("Корзина") }
                             )
                         }
-                    }
+                    },
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->
                     AppNavGraph(
                         navController = navController,
                         viewModel = viewModel,
-                        innerPadding = innerPadding
+                        innerPadding = innerPadding,
+                        onShowAddedToCart = {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Товар добавлен в корзину")
+                            }
+                        }
                     )
                 }
             }

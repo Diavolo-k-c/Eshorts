@@ -1,5 +1,7 @@
 package com.example.eshorts.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
+import kotlinx.coroutines.launch
 
 enum class BottomDestination {
     Favorites, Home, Cart
@@ -21,6 +24,9 @@ enum class BottomDestination {
 fun EshortsApp(viewModel: ShopViewModel) {
     var currentDestination by remember { mutableStateOf(BottomDestination.Home) }
     var selectedProductId by remember { mutableStateOf<Int?>(null) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         bottomBar = {
@@ -53,41 +59,55 @@ fun EshortsApp(viewModel: ShopViewModel) {
                     label = { Text("Корзина") }
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        when (currentDestination) {
-            BottomDestination.Home -> {
-                if (selectedProductId == null) {
-                    HomeScreen(
+        Box(Modifier.padding(innerPadding)) {
+            when (currentDestination) {
+                BottomDestination.Home -> {
+                    if (selectedProductId == null) {
+                        HomeScreen(
+                            viewModel = viewModel,
+                            onOpenDetail = { id -> selectedProductId = id },
+                            onOpenCart = { currentDestination = BottomDestination.Cart },
+                            onOpenAccount = { /* TODO: аккаунт */ },
+                            onShowAddedToCart = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Товар добавлен в корзину")
+                                }
+                            }
+                        )
+                    } else {
+                        DetailScreen(
+                            productId = selectedProductId!!,
+                            viewModel = viewModel,
+                            onBack = { selectedProductId = null },
+                            onShowAddedToCart = {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar("Товар добавлен в корзину")
+                                }
+                            }
+                        )
+                    }
+                }
+
+                BottomDestination.Cart -> {
+                    CartScreen(
                         viewModel = viewModel,
-                        onOpenDetail = { id -> selectedProductId = id },
-                        onOpenCart = { currentDestination = BottomDestination.Cart }
-                    )
-                } else {
-                    DetailScreen(
-                        productId = selectedProductId!!,
-                        viewModel = viewModel,
-                        onBack = { selectedProductId = null }
+                        onBack = { currentDestination = BottomDestination.Home }
                     )
                 }
-            }
 
-            BottomDestination.Cart -> {
-                CartScreen(
-                    viewModel = viewModel,
-                    onBack = { currentDestination = BottomDestination.Home }
-                )
-            }
-
-            BottomDestination.Favorites -> {
-                FavoritesScreen(
-                    viewModel = viewModel,
-                    onBack = { currentDestination = BottomDestination.Home },
-                    onOpenDetail = { id ->
-                        selectedProductId = id
-                        currentDestination = BottomDestination.Home
-                    }
-                )
+                BottomDestination.Favorites -> {
+                    FavoritesScreen(
+                        viewModel = viewModel,
+                        onBack = { currentDestination = BottomDestination.Home },
+                        onOpenDetail = { id ->
+                            selectedProductId = id
+                            currentDestination = BottomDestination.Home
+                        }
+                    )
+                }
             }
         }
     }
