@@ -4,4 +4,5 @@ object Routes {
     const val HOME = "home"
     const val DETAIL = "detail"
     const val CART = "cart"
+    const val FAVORITES = "favorites"
 }

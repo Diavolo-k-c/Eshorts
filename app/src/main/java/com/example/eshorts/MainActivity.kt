@@ -3,20 +3,18 @@ package com.example.eshorts
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.eshorts.ui.theme.EshortsTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.eshorts.data.repository.ShortsRepository
 import com.example.eshorts.data.navigation.AppNavGraph
+import com.example.eshorts.data.navigation.Routes
+import com.example.eshorts.data.repository.ShortsRepository
 import com.example.eshorts.viewmodel.ShopViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.ShoppingCart
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +26,69 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
-                AppNavGraph(navController = navController, viewModel = viewModel)
+                val backStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = backStackEntry?.destination?.route
+
+                Scaffold(
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                selected = currentRoute == Routes.FAVORITES,
+                                onClick = {
+                                    navController.navigate(Routes.FAVORITES) {
+                                        popUpTo(Routes.HOME) { inclusive = false }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.FavoriteBorder,
+                                        contentDescription = "Избранное"
+                                    )
+                                },
+                                label = { Text("Избранное") }
+                            )
+                            NavigationBarItem(
+                                selected = currentRoute == Routes.HOME || currentRoute?.startsWith(Routes.DETAIL) == true,
+                                onClick = {
+                                    navController.navigate(Routes.HOME) {
+                                        popUpTo(Routes.HOME) { inclusive = true }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Home,
+                                        contentDescription = "Товары"
+                                    )
+                                },
+                                label = { Text("Товары") }
+                            )
+                            NavigationBarItem(
+                                selected = currentRoute == Routes.CART,
+                                onClick = {
+                                    navController.navigate(Routes.CART) {
+                                        popUpTo(Routes.HOME) { inclusive = false }
+                                        launchSingleTop = true
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.ShoppingCart,
+                                        contentDescription = "Корзина"
+                                    )
+                                },
+                                label = { Text("Корзина") }
+                            )
+                        }
+                    }
+                ) { innerPadding ->
+                    AppNavGraph(
+                        navController = navController,
+                        viewModel = viewModel,
+                        innerPadding = innerPadding
+                    )
+                }
             }
         }
     }
