@@ -65,8 +65,21 @@ class ShopViewModel(
     fun toggleFavorite(product: ShortProduct) {
         viewModelScope.launch {
             try {
+                val current = _productsState.value.data ?: emptyList()
+
+                val updated = current.map {
+                    if (it.id == product.id) {
+                        it.copy(isFavorite = !it.isFavorite)
+                    } else {
+                        it
+                    }
+                }
+
+                // кладём новый список в состояние
+                _productsState.value = _productsState.value.copy(data = updated)
+
+                // и параллельно сохраняем в репозиторий
                 repository.updateProduct(product.copy(isFavorite = !product.isFavorite))
-                loadProducts()
             } catch (e: Exception) {
                 _productsState.value = _productsState.value.copy(error = "Не удалось изменить избранное")
             }
