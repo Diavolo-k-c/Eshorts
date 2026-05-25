@@ -54,7 +54,7 @@ fun HomeScreen(
                         Row(modifier = Modifier.padding(16.dp)) {
 
                             AsyncImage(
-                                model = product.imageUrl,
+                                model = product.imageUrls,
                                 contentDescription = product.name,
                                 modifier = Modifier.size(80.dp),
                                 contentScale = ContentScale.Crop

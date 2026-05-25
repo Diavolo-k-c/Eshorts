@@ -5,8 +5,14 @@ data class ShortProduct(
     val name: String,
     val price: Double,
     val description: String,
-    val imageUrl: String = "",
+    val imageUrlsRaw: String = "",
     val inCart: Boolean = false,
     val isFavorite: Boolean = false,
     val quantity: Int = 0
-)
+) {
+    val imageUrls: List<String>
+        get() = imageUrlsRaw
+            .split(";")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+}
