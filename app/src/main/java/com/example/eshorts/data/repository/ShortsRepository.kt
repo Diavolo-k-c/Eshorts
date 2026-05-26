@@ -6,7 +6,6 @@ import com.example.eshorts.data.db.ShortsDbHelper
 import com.example.eshorts.data.model.ShortProduct
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 class ShortsRepository(context: Context) {
 
     private val dbHelper = ShortsDbHelper(context.applicationContext)
@@ -76,7 +75,6 @@ class ShortsRepository(context: Context) {
             put(ShortsDbHelper.COL_NAME, product.name)
             put(ShortsDbHelper.COL_PRICE, product.price)
             put(ShortsDbHelper.COL_DESCRIPTION, product.description)
-            // строка со всеми картинками
             put(ShortsDbHelper.COL_IMAGE_URL, product.imageUrlsRaw)
             put(ShortsDbHelper.COL_IN_CART, if (product.inCart) 1 else 0)
             put(ShortsDbHelper.COL_IS_FAVORITE, if (product.isFavorite) 1 else 0)

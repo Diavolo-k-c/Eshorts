@@ -1,22 +1,18 @@
 package com.example.eshorts.ui.screens
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import androidx.compose.ui.layout.ContentScale
 import com.example.eshorts.ui.formatRubles
 import com.example.eshorts.viewmodel.ShopViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +63,45 @@ fun DetailScreen(
                 .fillMaxSize()
         ) {
 
+            if (product.imageUrls.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(260.dp)
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    product.imageUrls.forEach { url ->
+                        AsyncImage(
+                            model = url,
+                            contentDescription = product.name,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(260.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Цена
+            Text(
+                text = formatRubles(product.price),
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Описание товара
+            if (!product.description.isNullOrBlank()) {
+                Text(
+                    text = product.description,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
             Spacer(modifier = Modifier.height(24.dp))
 
             Row(
@@ -86,8 +121,16 @@ fun DetailScreen(
                 OutlinedButton(
                     onClick = { viewModel.toggleFavorite(product) }
                 ) {
-                    Text(if (product.isFavorite) "Убрать из избранного" else "В избранное")
+                    Text(
+                        if (product.isFavorite)
+                            "Убрать из избранного"
+                        else
+                            "В избранное"
+                    )
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
-    }}
+    }
+}

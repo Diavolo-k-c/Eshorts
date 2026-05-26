@@ -21,7 +21,7 @@ fun HomeScreen(
     onOpenDetail: (Int) -> Unit,
     onOpenCart: () -> Unit,
     onOpenAccount: () -> Unit,
-    onShowAddedToCart: () -> Unit   // новый параметр
+    onShowAddedToCart: () -> Unit
 ) {
     val state = viewModel.productsState.collectAsStateWithLifecycle().value
 

@@ -40,7 +40,6 @@ fun CartScreen(
 
             else -> {
                 val products = state.data ?: emptyList()
-                // общая стоимость: сумма price * quantity
                 val total = products.sumOf { it.price * it.quantity }
 
                 Column(
@@ -68,13 +67,13 @@ fun CartScreen(
                                     ) {
                                         Text(product.name)
 
-                                        // цена за штуку
+
                                         Text("Цена: ${formatRubles(product.price)}")
 
-                                        // количество
+
                                         Text("Кол-во: ${product.quantity}")
 
-                                        // сумма по позиции
+
                                         val lineTotal = product.price * product.quantity
                                         Text("Итого: ${formatRubles(lineTotal)}")
                                     }

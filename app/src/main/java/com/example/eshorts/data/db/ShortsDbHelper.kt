@@ -9,8 +9,7 @@ class ShortsDbHelper(context: Context) :
 
     companion object {
         const val DATABASE_NAME = "eshorts.db"
-        const val DATABASE_VERSION = 4
-
+        const val DATABASE_VERSION = 8
         const val TABLE_PRODUCTS = "short_products"
         const val COL_ID = "id"
         const val COL_NAME = "name"
@@ -44,7 +43,7 @@ class ShortsDbHelper(context: Context) :
             'Шорты Basic',
             1999.0,
             'Базовые шорты на каждый день',
-            'https://example.com/basic_1.png;https://example.com/basic_2.png;https://example.com/basic_3.png',
+            'https://cr-locman.ru/wp-content/uploads/2022/08/614fd9f3782a2488.jpg;https://image.made-in-china.com/202f0j00djfkcqzInHoD/Men-5-Inch-Inseam-Shorts-Custom-Logo-Solid-Color-Dry-Fit-Oversize-Workout-Shorts-Mens-Athletic-Shorts.webp;https://example.com/basic_3.png',
             0,
             0,
             0
@@ -57,7 +56,7 @@ class ShortsDbHelper(context: Context) :
             'Шорты Sport',
             2499.0,
             'Спортивные шорты для активности',
-            'https://example.com/sport_1.png;https://example.com/sport_2.png',
+            'https://png.klev.club/uploads/posts/2024-04/png-klev-club-og8l-p-shorti-png-25.png;https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZAueqMsbPU3mXidy5sY9K52c63qQ0pMt2jg&s',
             0,
             0,
             0
