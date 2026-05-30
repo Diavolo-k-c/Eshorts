@@ -5,4 +5,5 @@ object Routes {
     const val DETAIL = "detail"
     const val CART = "cart"
     const val FAVORITES = "favorites"
+    const val ACCOUNT = "account"
 }

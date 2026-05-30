@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.eshorts.ui.screens.AccountScreen
 import com.example.eshorts.ui.screens.CartScreen
 import com.example.eshorts.ui.screens.DetailScreen
 import com.example.eshorts.ui.screens.HomeScreen
@@ -36,7 +37,7 @@ fun AppNavGraph(
                     navController.navigate(Routes.CART)
                 },
                 onOpenAccount = {
-                    // TODO: экран аккаунта
+                    navController.navigate(Routes.ACCOUNT)
                 },
                 onShowAddedToCart = onShowAddedToCart
             )
@@ -69,6 +70,12 @@ fun AppNavGraph(
                 onOpenDetail = { id ->
                     navController.navigate("${Routes.DETAIL}/$id")
                 }
+            )
+        }
+        composable(Routes.ACCOUNT) {
+            AccountScreen(
+                viewModel = viewModel,
+                onBack = { navController.popBackStack() }
             )
         }
     }

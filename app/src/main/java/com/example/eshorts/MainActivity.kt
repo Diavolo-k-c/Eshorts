@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.eshorts.data.navigation.AppNavGraph
 import com.example.eshorts.data.navigation.Routes
 import com.example.eshorts.data.repository.ShortsRepository
+import com.example.eshorts.data.repository.UserRepository
 import com.example.eshorts.viewmodel.ShopViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -20,16 +21,15 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val repository = ShortsRepository(this)
-        val viewModel = ShopViewModel(repository)
+        val productRepository = ShortsRepository(this)
+        val userRepository = UserRepository(this)
+        val viewModel = ShopViewModel(productRepository, userRepository)
 
         setContent {
             MaterialTheme {
                 val navController = rememberNavController()
                 val backStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = backStackEntry?.destination?.route
-
                 val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
 

@@ -1,28 +1,57 @@
 package com.example.eshorts.viewmodel
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.eshorts.data.model.ShortProduct
+import com.example.eshorts.data.model.User
 import com.example.eshorts.data.repository.ShortsRepository
+import com.example.eshorts.data.repository.UserRepository
 import com.example.eshorts.ui.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ShopViewModel(
-    private val repository: ShortsRepository
+    private val repository: ShortsRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _productsState = MutableStateFlow(UiState<List<ShortProduct>>(isLoading = true))
     val productsState: StateFlow<UiState<List<ShortProduct>>> = _productsState
-
     private val _cartState = MutableStateFlow(UiState<List<ShortProduct>>(isLoading = true))
     val cartState: StateFlow<UiState<List<ShortProduct>>> = _cartState
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser
 
     init {
         loadProducts()
         loadCart()
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            _currentUser.value = userRepository.getCurrentUser()
+        }
+    }
+
+    fun registerUser(
+        email: String,
+        password: String,
+        onResult: (Result<User>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val result = userRepository.register(email, password)
+            if (result.isSuccess) {
+                _currentUser.value = result.getOrNull()
+            }
+            onResult(result)
+        }
+    }
+
+    fun logout() {
+        userRepository.logout()
+        _currentUser.value = null
     }
 
     fun loadProducts() {
@@ -75,10 +104,8 @@ class ShopViewModel(
                     }
                 }
 
-                // кладём новый список в состояние
                 _productsState.value = _productsState.value.copy(data = updated)
 
-                // и параллельно сохраняем в репозиторий
                 repository.updateProduct(product.copy(isFavorite = !product.isFavorite))
             } catch (e: Exception) {
                 _productsState.value = _productsState.value.copy(error = "Не удалось изменить избранное")

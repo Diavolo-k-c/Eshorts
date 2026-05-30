@@ -9,7 +9,7 @@ class ShortsDbHelper(context: Context) :
 
     companion object {
         const val DATABASE_NAME = "eshorts.db"
-        const val DATABASE_VERSION = 8
+        const val DATABASE_VERSION = 11
         const val TABLE_PRODUCTS = "short_products"
         const val COL_ID = "id"
         const val COL_NAME = "name"
@@ -19,10 +19,14 @@ class ShortsDbHelper(context: Context) :
         const val COL_IN_CART = "in_cart"
         const val COL_IS_FAVORITE = "is_favorite"
         const val COL_QUANTITY = "quantity"
+        const val TABLE_USERS = "users"
+        const val COL_USER_ID = "id"
+        const val COL_USER_EMAIL = "email"
+        const val COL_USER_PASSWORD = "password"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        val sql = """
+        val productsSql = """
         CREATE TABLE $TABLE_PRODUCTS (
             $COL_ID INTEGER PRIMARY KEY AUTOINCREMENT,
             $COL_NAME TEXT NOT NULL,
@@ -33,9 +37,9 @@ class ShortsDbHelper(context: Context) :
             $COL_IS_FAVORITE INTEGER NOT NULL DEFAULT 0,
             $COL_QUANTITY INTEGER NOT NULL DEFAULT 0
         )
-    """.trimIndent()
+        """.trimIndent()
 
-        db.execSQL(sql)
+        db.execSQL(productsSql)
 
         db.execSQL("""
         INSERT INTO $TABLE_PRODUCTS ($COL_NAME, $COL_PRICE, $COL_DESCRIPTION, $COL_IMAGE_URL, $COL_IN_CART, $COL_IS_FAVORITE, $COL_QUANTITY)
@@ -48,7 +52,7 @@ class ShortsDbHelper(context: Context) :
             0,
             0
         )
-    """.trimIndent())
+        """.trimIndent())
 
         db.execSQL("""
         INSERT INTO $TABLE_PRODUCTS ($COL_NAME, $COL_PRICE, $COL_DESCRIPTION, $COL_IMAGE_URL, $COL_IN_CART, $COL_IS_FAVORITE, $COL_QUANTITY)
@@ -61,11 +65,28 @@ class ShortsDbHelper(context: Context) :
             0,
             0
         )
-    """.trimIndent())
+        """.trimIndent())
+
+        val usersSql = """
+        CREATE TABLE $TABLE_USERS (
+            $COL_USER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+            $COL_USER_EMAIL TEXT NOT NULL UNIQUE,
+            $COL_USER_PASSWORD TEXT NOT NULL
+        )
+        """.trimIndent()
+
+        db.execSQL(usersSql)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_PRODUCTS")
-        onCreate(db)
+        if (oldVersion < 9) {
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS $TABLE_USERS (
+                    $COL_USER_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    $COL_USER_EMAIL TEXT NOT NULL UNIQUE,
+                    $COL_USER_PASSWORD TEXT NOT NULL
+                )
+            """.trimIndent())
+        }
     }
 }
